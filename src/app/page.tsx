@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import {
   Map,
   Compass,
@@ -29,7 +31,7 @@ const Header = () => {
   return (
     <header className="absolute top-0 left-0 w-full z-50 px-[30px] py-6 flex justify-between items-center">
       {/* LEFT SIDE: Logo */}
-      <a href="/" className="flex items-center gap-2 group cursor-pointer no-underline">
+      <Link href="/" className="flex items-center gap-2 group cursor-pointer no-underline">
         <Globe 
           className="w-8 h-8 text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-12" 
           strokeWidth={1.5} 
@@ -37,18 +39,18 @@ const Header = () => {
         <span className="text-white font-bold text-xl tracking-wide font-sans">
           EARTHLY
         </span>
-      </a>
+      </Link>
 
       {/* CENTER: Main navigation menu (Glassmorphism) */}
       <nav className="hidden md:flex items-center gap-8 bg-white/10 backdrop-blur-md px-8 py-3 rounded-full border border-white/10 shadow-lg">
         {navItems.map((item) => (
-          <a 
+          <Link 
             key={item.name} 
             href={item.href} 
             className="text-white text-sm font-medium transition-all duration-300 hover:scale-110 transform no-underline"
           >
             {item.name}
-          </a>
+          </Link>
         ))}
       </nav>
 
@@ -97,12 +99,12 @@ const HomeView = () => {
         {/* Category buttons */}
         <div className="mt-12 flex flex-wrap justify-center gap-8 md:gap-12">
           {categories.map((cat, index) => (
-            <a key={index} href={cat.href} className="flex flex-col items-center gap-4 cursor-pointer group no-underline">
+            <Link key={index} href={cat.href} className="flex flex-col items-center gap-4 cursor-pointer group no-underline">
               <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-white/20 shadow-lg shadow-black/20">
                 {cat.icon}
               </div>
               <span className="text-white text-lg font-light tracking-wide">{cat.name}</span>
-            </a>
+            </Link>
           ))}
         </div>
       </section>
@@ -128,10 +130,11 @@ const HomeView = () => {
               key={dest.id} 
               className="relative shrink-0 w-80 h-64 md:w-[23%] md:h-72 rounded-[35px] bg-black/10 border border-white/10 overflow-hidden snap-center group cursor-pointer shadow-xl shadow-black/30"
             >
-              <img 
+              <Image 
                 src={dest.image} 
                 alt="Destination" 
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                fill
+                className="object-cover transition-transform duration-1000 group-hover:scale-110" 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
               
@@ -164,10 +167,12 @@ export default function App() {
         {/* Decorative Background Layer */}
         <div className="fixed inset-0 z-0 pointer-events-none select-none">
           <div className="absolute inset-0">
-            <img
+            <Image
               src="/Back_Globe.png"
               alt="Earth Globe Background"
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              priority
             />
             {/* Soft global overlay to tone down general brightness */}
             <div className="absolute inset-0 bg-black/30" />
