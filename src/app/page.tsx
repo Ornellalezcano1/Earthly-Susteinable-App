@@ -34,9 +34,8 @@ const Header = () => {
 
   return (
     <>
-      {/* CAMBIO: Padding reducido en mobile (px-2) para efecto "ancho a ancho" */}
-      {/* Desktop (md:px-[30px]) se mantiene igual */}
-      <header className="absolute top-0 left-0 w-full z-50 px-2 md:px-[30px] py-4 md:py-6 flex justify-between items-center">
+      {/* CAMBIO: Unificado a px-4 en mobile para alineación perfecta con el body */}
+      <header className="absolute top-0 left-0 w-full z-50 px-4 md:px-[30px] py-4 md:py-6 flex justify-between items-center">
         {/* LEFT SIDE: Logo */}
         <Link href="/" className="flex items-center gap-2 group cursor-pointer no-underline relative z-50">
           <Globe 
@@ -112,9 +111,11 @@ const Header = () => {
    VIEW: Main Page Content
    ========================================================================== */
 const HomeView = () => {
-  const scrollContainerRef = useRef(null);
+  // CORRECCIÓN TS: Agregado el tipo genérico HTMLDivElement
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const scroll = (direction) => {
+  // CORRECCIÓN TS: Agregado el tipo para el parámetro direction
+  const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
       const { current } = scrollContainerRef;
       const scrollAmount = direction === 'left' ? -300 : 300;
@@ -133,12 +134,12 @@ const HomeView = () => {
     { id: 1, image: '/Popular_1.jpg', text: 'Tranquil lakes and majestic peaks await.', price: '$400' },
     { id: 2, image: '/Popular_2.jpg', text: 'Hike ancient trails and crystal-clear rivers.', price: '$400' },
     { id: 3, image: '/Popular_3.jpg', text: 'Explore alpine meadows and iconic summits.', price: '$400' },
-    { id: 4, image: '/Popular_4.jpg', text: "Relax on hidden beaches and turquoise waters.", price: '$400' },
+    { id: 4, image: '/Popular_4.jpg', text: 'Relax on hidden beaches and turquoise waters.', price: '$400' },
   ];
 
   return (
-    // Mobile: Reduced padding to px-1 (4px)
-    <div className="flex-1 relative flex flex-col w-full h-full overflow-hidden px-1 md:px-[30px]">
+    // CAMBIO: px-4 en mobile para que coincida con el Header
+    <div className="flex-1 relative flex flex-col w-full h-full overflow-hidden px-4 md:px-[30px]">
       {/* Hero Section */}
       <section className="flex-1 flex flex-col items-center justify-center text-center px-0 md:px-4 pt-10 md:pt-16 mt-0 md:mt-12">
         
@@ -151,7 +152,7 @@ const HomeView = () => {
           Sustainable adventures start here
         </h2>
 
-        {/* Botones de Ancho a Ancho en Mobile */}
+        {/* CAMBIO: px-0 para que justify-between toque los bordes del contenedor padre (px-4) */}
         <div className="mt-12 flex flex-row justify-between items-center w-full px-0 md:mt-12 md:flex md:flex-row md:justify-center md:gap-12 md:w-auto md:px-0">
           {categories.map((cat, index) => (
             <Link 
@@ -171,8 +172,9 @@ const HomeView = () => {
       </section>
 
       {/* Cards Section */}
-      <section className="w-full z-20 pb-10 md:pb-0 mt-auto">
-        <div className="flex justify-between items-end mb-4 w-full px-2 md:px-0">
+      <section className="w-full z-20 pb-4 md:pb-0 mt-auto">
+        {/* CAMBIO: px-0 en mobile */}
+        <div className="flex justify-between items-end mb-4 w-full px-0 md:px-0">
           <h2 className="text-white text-lg md:text-2xl font-medium tracking-tight opacity-90">Popular Now</h2>
           <div className="flex gap-4">
             <button 
@@ -190,9 +192,10 @@ const HomeView = () => {
           </div>
         </div>
 
+        {/* CAMBIO: px-0 en mobile */}
         <div 
           ref={scrollContainerRef}
-          className="flex xl:justify-between justify-start gap-4 md:gap-6 overflow-x-auto snap-x scrollbar-hide w-full items-center pb-6 md:pb-6 px-2 md:px-0"
+          className="flex xl:justify-between justify-start gap-4 md:gap-6 overflow-x-auto snap-x scrollbar-hide w-full items-center pb-6 md:pb-6 px-0 md:px-0"
         >
           {destinationsData.map((dest) => (
             <div 
@@ -230,9 +233,13 @@ const HomeView = () => {
 export default function App() {
   return (
     <main className="relative w-full h-screen bg-[#050609] font-sans text-white overflow-hidden">
+      {/* Simulated fixed resolution container */}
       <div className="relative w-full h-full max-w-[1920px] mx-auto flex flex-col">
+        
+        {/* Decorative Background Layer */}
         <div className="fixed inset-0 z-0 pointer-events-none select-none">
           <div className="absolute inset-0">
+            {/* Note: Ensure this image exists in your public folder */}
             <Image
               src="/Back_Globe.png"
               alt="Earth Globe Background"
@@ -240,10 +247,12 @@ export default function App() {
               className="object-cover"
               priority
             />
+            {/* Soft global overlay to tone down general brightness */}
             <div className="absolute inset-0 bg-black/30" />
           </div>
         </div>
 
+        {/* Main structure */}
         <div className="relative z-10 flex flex-col h-full w-full">
           <Header />
           <HomeView />
