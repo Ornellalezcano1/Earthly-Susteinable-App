@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
@@ -8,15 +8,18 @@ import {
   Globe, 
   Search, 
   User, 
-  ArrowUpRight,
-  Fingerprint,
-  Compass
+  ArrowUpRight, 
+  Fingerprint, 
+  Compass, 
+  Menu, 
+  X 
 } from 'lucide-react';
 
 /* ==========================================================================
-   COMPONENT: Header (Integrated Version)
+   COMPONENT: Header (Integrated & Responsive)
    ========================================================================== */
 const Header = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navItems = [
     { name: 'About Us', href: '/about-us' },
     { name: 'Globe', href: 'https://eco-travel-globe-earthly.vercel.app/' },
@@ -26,60 +29,58 @@ const Header = () => {
   ];
 
   return (
-    <header className="absolute top-0 left-0 w-full z-50 px-[30px] py-6 flex justify-between items-center">
-      {/* LEFT SIDE: Logo */}
-      <Link href="/" className="flex items-center gap-2 group cursor-pointer no-underline">
-        <Globe 
-          className="w-8 h-8 text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-12 group-hover:text-blue-400" 
-          strokeWidth={1.5} 
-        />
-        <span className="text-white font-bold text-xl tracking-wide font-sans transition-colors group-hover:text-white/90">
-          EARTHLY
-        </span>
-      </Link>
+    <>
+      <header className="absolute top-0 left-0 w-full z-50 px-0 md:px-[30px] py-1 md:py-6 flex justify-between items-center h-14 md:h-auto">
+        <Link href="/" className="flex items-center gap-2 group cursor-pointer no-underline relative z-50 pl-1 md:pl-0">
+          <Globe 
+            className="w-7 h-7 md:w-8 md:h-8 text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-12 group-hover:text-blue-400" 
+            strokeWidth={1.5} 
+          />
+          <span className="text-white font-bold text-lg md:text-xl tracking-wide font-sans">
+            EARTHLY
+          </span>
+        </Link>
 
-      {/* CENTER: Main Navigation Menu */}
-      <nav className="hidden md:flex items-center gap-8 bg-white/10 backdrop-blur-md px-8 py-3 rounded-full border border-white/10 shadow-lg transition-all hover:bg-white/[0.15] hover:border-white/20">
-        {navItems.map((item) => {
-          const isExternal = item.href.startsWith('http');
-          const commonClasses = "text-white text-sm font-medium transition-all duration-300 hover:scale-110 hover:text-blue-300 transform no-underline active:scale-95";
-          
-          if (isExternal) {
-            return (
-              <a 
-                key={item.name} 
-                href={item.href} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className={commonClasses}
-              >
-                {item.name}
-              </a>
+        <nav className="hidden md:flex items-center gap-8 bg-white/10 backdrop-blur-md px-8 py-3 rounded-full border border-white/10 shadow-lg">
+          {navItems.map((item) => {
+            const isExternal = item.href.startsWith('http');
+            const commonClasses = "text-white text-sm font-medium transition-all duration-300 hover:scale-110 hover:text-blue-300 transform no-underline";
+            return isExternal ? (
+              <a key={item.name} href={item.href} target="_blank" rel="noopener noreferrer" className={commonClasses}>{item.name}</a>
+            ) : (
+              <Link key={item.name} href={item.href} className={commonClasses}>{item.name}</Link>
             );
-          }
+          })}
+        </nav>
 
-          return (
-            <Link 
-              key={item.name} 
-              href={item.href} 
-              className={commonClasses}
-            >
-              {item.name}
-            </Link>
-          );
-        })}
-      </nav>
+        <div className="flex items-center gap-4 z-50 pr-1 md:pr-0">
+          <button className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white transition-all duration-300 hover:bg-white/20 border border-white/5">
+            <Search size={18} />
+          </button>
+          <button className="hidden md:flex w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white transition-all duration-300 hover:bg-white/20 border border-white/5">
+            <User size={18} />
+          </button>
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white transition-all duration-300 border border-white/5"
+          >
+            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+      </header>
 
-      {/* RIGHT SIDE: Action Buttons */}
-      <div className="flex items-center gap-4">
-        <button className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white transition-all duration-300 hover:bg-white/20 hover:scale-110 hover:border-white/30 active:scale-90 border border-white/5">
-          <Search size={18} />
-        </button>
-        <button className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white transition-all duration-300 hover:bg-white/20 hover:scale-110 hover:border-white/30 active:scale-90 border border-white/5">
-          <User size={18} />
-        </button>
+      <div className={`fixed inset-0 z-40 bg-black/95 backdrop-blur-xl transition-transform duration-500 md:hidden flex flex-col items-center justify-center ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        <nav className="flex flex-col items-center gap-6">
+          {navItems.map((item) => (
+            <Link key={item.name} href={item.href} onClick={() => setIsMobileMenuOpen(false)} className="text-white text-sm font-medium tracking-widest transition-all duration-300 hover:text-white/70 no-underline uppercase">{item.name}</Link>
+          ))}
+          <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="text-white text-sm font-medium tracking-widest transition-all duration-300 hover:text-white/70 flex items-center gap-2 mt-4 border-t border-white/10 pt-6 no-underline uppercase">
+            <User size={16} />
+            <span>Profile</span>
+          </Link>
+        </nav>
       </div>
-    </header>
+    </>
   );
 };
 
@@ -106,12 +107,8 @@ export default function App() {
   ];
 
   return (
-    <main className="relative w-full min-h-screen bg-[#050609] font-sans text-white overflow-x-hidden
-                    [&::-webkit-scrollbar]:w-2 
-                    [&::-webkit-scrollbar-track]:bg-transparent 
-                    [&::-webkit-scrollbar-thumb]:bg-white/10 
-                    hover:[&::-webkit-scrollbar-thumb]:bg-white/20 
-                    [&::-webkit-scrollbar-thumb]:rounded-full">
+    <main className="relative w-full h-svh bg-[#050609] font-sans text-white overflow-x-hidden overflow-y-auto selection:bg-indigo-500/30 scrollbar-hide">
+      
       {/* Background Decor */}
       <div className="fixed inset-0 z-0 pointer-events-none select-none">
         <div className="absolute top-[80px] left-[-200px] w-[900px] h-[900px] bg-blue-900/10 blur-[160px] rounded-full mix-blend-screen" />
@@ -120,26 +117,25 @@ export default function App() {
 
       <Header />
 
-      <div className="relative z-10">
+      <div className="relative z-10 flex flex-col w-full min-h-full pb-[60px]">
         {/* HERO SECTION */}
-        <section className="px-[30px] pt-32 md:pt-48 pb-20 max-w-6xl mx-auto w-full text-center">
-          <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 hover:bg-white/10 transition-colors cursor-default">
+        <section className="px-1 md:px-[30px] pt-24 md:pt-48 pb-12 md:pb-20 max-w-6xl mx-auto w-full text-center">
+          <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 hover:bg-white/10 transition-colors cursor-default ml-1 md:ml-0">
             <Leaf size={14} />
             The Earthly Manifesto
           </div>
-          <h1 className="text-5xl md:text-8xl font-medium tracking-tighter leading-[0.9] mb-10 animate-in fade-in slide-in-from-top-8 duration-1000">
+          <h1 className="text-[9vw] sm:text-7xl md:text-8xl font-medium tracking-tighter leading-[0.95] mb-8 md:mb-10 pl-1 md:pl-0 animate-in fade-in slide-in-from-top-8 duration-1000">
             A new era of <br /> <span className="text-white/40 italic font-light hover:text-white transition-colors duration-500 cursor-default">regenerative travel.</span>
           </h1>
-          <h2 className="sr-only">Our Vision</h2>
-          <p className="text-white/60 text-xl md:text-2xl font-light leading-relaxed max-w-3xl mx-auto tracking-tight animate-in fade-in duration-1000 delay-300">
+          <p className="text-white/60 text-[4.4vw] sm:text-2xl md:text-2xl font-light leading-relaxed max-w-3xl mx-auto tracking-tight pl-1 md:pl-0 animate-in fade-in duration-1000 delay-300">
             Earthly was born from a simple idea: travel should give back more than it takes. We are a digital ecosystem dedicated to the preservation of our planet&apos;s most fragile corners.
           </p>
         </section>
 
         {/* ECO TRAVEL GLOBE DEEP DIVE */}
-        <section className="px-[30px] py-20 w-full max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-8">
+        <section className="px-1 md:px-[30px] py-12 md:py-20 w-full max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center mx-1 md:mx-0">
+            <div className="space-y-6 md:space-y-8">
               <h2 className="text-3xl md:text-5xl font-medium tracking-tight">The Eco Travel Globe.</h2>
               <p className="text-white/50 text-lg font-light leading-relaxed italic">
                 Our core innovation isn&apos;t just a map; it&apos;s the living pulse of the planet.
@@ -158,7 +154,7 @@ export default function App() {
                 </div>
               </div>
             </div>
-            <div className="relative aspect-square lg:aspect-video rounded-[60px] overflow-hidden border border-white/10 group shadow-2xl shadow-blue-500/10 cursor-pointer">
+            <div className="relative aspect-square lg:aspect-video rounded-[40px] md:rounded-[60px] overflow-hidden border border-white/10 group shadow-2xl shadow-blue-500/10 cursor-pointer">
               <Image 
                 src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1200" 
                 alt="Technology and Earth" 
@@ -168,7 +164,7 @@ export default function App() {
               />
               <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-transparent to-black/60 opacity-60 group-hover:opacity-30 transition-opacity" />
               <div className="absolute inset-0 flex items-center justify-center">
-                 <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center animate-pulse group-hover:scale-125 group-hover:bg-white/20 transition-all duration-500">
+                 <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center animate-pulse group-hover:scale-125 group-hover:bg-white/20 transition-all duration-500">
                     <Globe className="text-white" size={32} />
                  </div>
               </div>
@@ -176,31 +172,30 @@ export default function App() {
           </div>
         </section>
 
-        {/* PILLARS GRID */}
-        <section className="px-[30px] py-24 w-full max-w-7xl mx-auto bg-white/[0.01] rounded-[80px] border border-white/5">
-          <div className="text-center mb-16">
-            <h3 className="text-2xl md:text-4xl font-medium tracking-tight cursor-default hover:tracking-wide transition-all duration-700">Our Strategic Pillars</h3>
+        {/* PILLARS GRID - Outer container styling removed for mobile */}
+        <section className="px-1 md:px-[30px] py-12 md:py-24 w-full max-w-7xl mx-auto md:bg-white/[0.01] md:rounded-[80px] md:border md:border-white/5">
+          <div className="text-center mb-10 md:mb-16">
+            <h3 className="text-2xl md:text-4xl font-medium tracking-tight cursor-default hover:tracking-wide transition-all duration-700 pl-1 md:pl-0">Our Strategic Pillars</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mx-1 md:mx-0">
             {pillars.map((p, i) => (
-              <div key={i} className="bg-white/[0.02] border border-white/5 p-10 rounded-[40px] hover:bg-white/[0.05] hover:border-white/20 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-500 group cursor-default">
-                <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white/10 transition-transform duration-500">
+              <div key={i} className="bg-white/[0.03] border border-white/10 p-8 md:p-10 rounded-[35px] md:rounded-[45px] hover:bg-white/[0.07] hover:border-white/20 hover:-translate-y-1.5 transition-all duration-500 group cursor-default shadow-xl shadow-black/20">
+                <div className="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-white/10 transition-transform duration-500">
                   {p.icon}
                 </div>
                 <h3 className="text-xl font-medium mb-4 group-hover:text-blue-300 transition-colors">{p.title}</h3>
-                <p className="text-white/40 font-light leading-relaxed group-hover:text-white/70 transition-colors">{p.desc}</p>
+                <p className="text-white/40 text-sm md:text-base font-light leading-relaxed group-hover:text-white/70 transition-colors">{p.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* PHILOSOPHY SECTION */}
-        <section className="px-[30px] w-full max-w-7xl mx-auto my-32">
-          <div className="bg-[#0a0b10] border border-white/10 rounded-[60px] p-8 md:p-20 flex flex-col md:flex-row items-center gap-16 overflow-hidden relative group shadow-2xl hover:border-white/20 transition-all duration-700">
-            {/* Decorative Glow */}
+        <section className="px-1 md:px-[30px] w-full max-w-7xl mx-auto my-20 md:my-32">
+          <div className="bg-[#0a0b10] border border-white/10 rounded-[40px] md:rounded-[60px] p-8 md:p-20 flex flex-col md:flex-row items-center gap-10 md:gap-16 overflow-hidden relative group shadow-2xl hover:border-white/20 transition-all duration-700 mx-1 md:mx-0">
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full -mr-64 -mt-64 transition-opacity group-hover:opacity-80" />
             
-            <div className="md:w-1/2 relative z-10 space-y-8 text-left">
+            <div className="md:w-1/2 relative z-10 space-y-6 md:space-y-8 text-left">
               <h2 className="text-4xl md:text-6xl font-medium tracking-tight leading-tight">
                 Inspiring <br /> responsible <br /> exploration.
               </h2>
@@ -215,7 +210,7 @@ export default function App() {
               </div>
             </div>
             
-            <div className="md:w-1/2 relative h-[450px] w-full rounded-[40px] overflow-hidden border border-white/10 shadow-inner group-hover:border-white/30 transition-all">
+            <div className="md:w-1/2 relative h-[300px] md:h-[450px] w-full rounded-[30px] md:rounded-[40px] overflow-hidden border border-white/10 shadow-inner group-hover:border-white/30 transition-all">
               <Image 
                 src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1200" 
                 alt="Earthly Landscape" 
@@ -228,17 +223,17 @@ export default function App() {
           </div>
         </section>
 
-        {/* VALUES / FOOTER PREVIEW */}
-        <section className="px-[30px] pb-32 text-center max-w-4xl mx-auto">
-          <div className="w-px h-24 bg-gradient-to-b from-blue-500 to-transparent mx-auto mb-12 opacity-50 group-hover:h-32 transition-all duration-1000" />
+        {/* VALUES / JOIN THE MOVEMENT */}
+        <section className="px-1 md:px-[30px] pb-24 md:pb-32 text-center max-w-4xl mx-auto">
+          <div className="w-px h-16 md:h-24 bg-gradient-to-b from-blue-500 to-transparent mx-auto mb-10 md:mb-12 opacity-50 group-hover:h-32 transition-all duration-1000" />
           <h2 className="text-3xl md:text-5xl font-medium tracking-tight mb-8">Join the movement.</h2>
-          <p className="text-white/30 text-lg font-light mb-12 italic hover:text-white/50 transition-colors cursor-default">
+          <p className="text-white/30 text-lg font-light mb-10 md:mb-12 italic hover:text-white/50 transition-colors cursor-default px-4">
             &quot;We do not inherit the earth from our ancestors, we borrow it from our children.&quot;
           </p>
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center gap-4 px-1">
             <Link 
               href="/destinations" 
-              className="px-10 py-5 bg-white !text-black no-underline rounded-2xl font-bold text-sm uppercase tracking-widest hover:bg-white hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] transition-all active:scale-95 shadow-2xl flex items-center justify-center min-w-[240px]"
+              className="px-8 md:px-10 py-3.5 md:py-4 bg-white !text-black no-underline rounded-[20px] font-bold text-[11px] md:text-xs tracking-[0.12em] uppercase transition-all hover:bg-white/90 hover:scale-[1.02] active:scale-[0.98] shadow-2xl flex items-center justify-center w-full md:w-auto md:min-w-[220px]"
               style={{ color: '#000000' }}
             >
               Start your journey
@@ -248,17 +243,15 @@ export default function App() {
       </div>
 
       {/* FOOTER */}
-      <footer className="px-[30px] py-12 border-t border-white/5 relative z-10 text-center group cursor-default">
-        <p className="text-[10px] text-white/20 uppercase tracking-[0.4em] group-hover:text-blue-400 group-hover:tracking-[0.5em] transition-all duration-700">
+      <footer className="px-1 md:px-[30px] py-10 md:py-12 border-t border-white/5 relative z-10 text-center group cursor-default">
+        <p className="text-[9px] md:text-[10px] text-white/20 uppercase tracking-[0.3em] md:tracking-[0.4em] group-hover:text-blue-400 group-hover:tracking-[0.5em] transition-all duration-700">
           EARTHLY TRAVEL PLATFORM • THE FUTURE OF SUSTAINABILITY
         </p>
       </footer>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         a.no-underline { text-decoration: none !important; }
       `}} />
     </main>
